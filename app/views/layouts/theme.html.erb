@@ -1,0 +1,72 @@
+<!doctype html>
+<!--[if lt IE 7 ]> <html class="ie ie6" lang="<%= I18n.locale %>"> <![endif]-->
+<!--[if IE 7 ]>    <html class="ie ie7" lang="<%= I18n.locale %>"> <![endif]-->
+<!--[if IE 8 ]>    <html class="ie ie8" lang="<%= I18n.locale %>"> <![endif]-->
+<!--[if IE 9 ]>    <html class="ie ie9" lang="<%= I18n.locale %>"> <![endif]-->
+<!--[if gt IE 9]><!--><html lang="<%= I18n.locale %>"><!--<![endif]-->
+  <head data-hook="inside_head">
+    <%= render partial: 'snippets/head' %>
+  </head>
+
+  <body class="<%= body_class %>" id="<%= @body_id || 'default' %>" data-hook="body">
+
+    <div class="container">
+
+    <header id="header" class="row" data-hook>
+      <figure id="logo" class="columns six" data-hook><%= logo %></figure>
+
+      <% @taxons = @taxon && @taxon.parent ? @taxon.parent.children : Spree::Taxon.roots %>
+      <%= form_tag spree.products_path, :method => :get do %>
+        <%= select_tag :taxon,
+              options_for_select([[Spree.t(:all_departments), '']] +
+                                    @taxons.map {|t| [t.name, t.id]},
+                                    @taxon ? @taxon.id : params[:taxon]), 'aria-label' => 'Taxon' %>
+        <%= search_field_tag :keywords, params[:keywords], :placeholder => Spree.t(:search) %>
+        <%= submit_tag Spree.t(:search), :name => nil %>
+      <% end %>
+
+      <% if store_menu? %>
+      <nav class="columns sixteen">
+        <ul id="main-nav-bar" class="inline" data-hook>
+          <li id="home-link" data-hook><%= link_to Spree.t(:home), spree.root_path %></li>
+          <li id="link-to-cart" data-hook><%= link_to_cart %></li>
+        </ul>
+      </nav>
+      <% end %>
+
+    </header>
+
+      <div id="wrapper" class="row" data-hook>
+
+        <%= breadcrumbs(@taxon) %>
+
+        <% if content_for? :sidebar %>
+        <aside id="sidebar" data-hook>
+          <%= yield :sidebar %>
+        </aside>
+        <% end %>
+
+        <div id="content" data-hook>
+          <%= flash_messages %>
+          <%= yield %>
+        </div>
+
+        <%= yield :templates %>
+
+      </div>
+
+      <footer id="footer" data-hook>
+        <div id="footer-left" data-hook>
+          <%= Spree.t :powered_by  %> <%= link_to 'Spree', 'http://spreecommerce.com/' %>
+        </div>
+        <div id="footer-right" data-hook></div>
+      </footer>
+
+    </div>
+
+    <%= render partial: 'snippets/google_analytics' %>
+    <script>
+      Spree.api_key = <%= raw(try_spree_current_user.try(:spree_api_key).to_s.inspect) %>;
+    </script>
+  </body>
+</html>
