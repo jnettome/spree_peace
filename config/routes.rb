@@ -1,19 +1,13 @@
 Spree::Core::Engine.routes.draw do
   get 'home/index'
 
-  # resources :products, :only => [:index, :show]
-
-  # get '/locale/set', :to => 'locale#set'
+  resources :products, :only => [:index, :show]
 
   # # non-restful checkout stuff
   # patch '/checkout/update/:state', :to => 'checkout#update', :as => :update_checkout
   # get '/checkout/:state', :to => 'checkout#edit', :as => :checkout_state
   # get '/checkout', :to => 'checkout#edit' , :as => :checkout
 
-  # populate_redirect = redirect do |params, request|
-  #   request.flash[:error] = Spree.t(:populate_get_error)
-  #   request.referer || '/cart'
-  # end
 
   # get '/orders/populate', :to => populate_redirect
   # get '/orders/:id/token/:token' => 'orders#show', :as => :token_order
